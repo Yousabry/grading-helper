@@ -1,12 +1,11 @@
 import React from "react";
 import { Table } from "reactstrap";
 import { Button } from "reactstrap";
+import config from "./config.json";
 
 export class GradeTable extends React.Component {
-  // STEP 1: Set this array depending on the assignment breakdown
-  totals = [2, 2, 2, 2, 2];
-  // STEP 2: Put your name and email here
-  yourNameAndEmail = "Youssef (youssefsabry@cmail.carleton.ca)";
+  totals = config.assignmentBreakdown;
+  yourNameAndEmail = config.signature;
 
   maxPossibleScore = this.totals.reduce((a, b) => a + b, 0);
 
@@ -28,7 +27,7 @@ export class GradeTable extends React.Component {
 
   markChange = (event, i) => {
     let newMarks = this.state.qmarks;
-    newMarks[i] = parseInt(event.target.value);
+    newMarks[i] = parseFloat(event.target.value);
     this.setState({ qmarks: newMarks });
 
     this.updateTotal();
@@ -124,7 +123,7 @@ export class GradeTable extends React.Component {
         this.state.comments[i]
       ) {
         feedback +=
-          `Part ${i + 1} (${this.state.qmarks[i]}/${this.state.qtotals[i]}) - ${
+          `${config.questionLabel} ${i + 1} (${this.state.qmarks[i]}/${this.state.qtotals[i]}) - ${
             this.state.comments[i]
           }` + delimiter;
       }
@@ -162,7 +161,9 @@ export class GradeTable extends React.Component {
                     <td>
                       <input
                         style={{ width: "50px" }}
-                        type="text"
+                        type="number"
+                        step="0.5"
+                        min="0"
                         value={this.state.qmarks[i]}
                         onChange={(event) => this.markChange(event, i)}
                       />
@@ -263,7 +264,7 @@ export class GradeTable extends React.Component {
           <textarea
             readOnly
             value={feedback}
-            style={{ width: "500px", height: "300px" }}
+            style={{ width: "100%", height: "300px" }}
             id="feedback"
           ></textarea>
         </div>

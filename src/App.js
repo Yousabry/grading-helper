@@ -1,4 +1,3 @@
-import './App.css';
 import './GradeTable.js'
 import React from 'react';
 import { GradeTable } from './GradeTable.js';
