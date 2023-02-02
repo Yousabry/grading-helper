@@ -15,7 +15,7 @@ export class GradeTable extends React.Component {
       qtotals: this.totals.map((item) => item), // mark allocation per question
       qmarks: this.totals.map((item) => item), // marks awarded per question
       comments: this.totals.map((item) => ""), // feedback per question
-      prevComments: this.totals.map((item) => []), // saved feedback for each question
+      prevComments: config.initialComments || this.totals.map((item) => []), // saved feedback for each question
       copySuccess: false, // flag for copy functionality
     };
   }
@@ -100,6 +100,22 @@ export class GradeTable extends React.Component {
     var copyText = document.getElementById("feedback");
     copyText.select();
     document.execCommand("copy");
+    this.setState({ copySuccess: true });
+
+    setTimeout(() => {
+      this.setState({ copySuccess: false });
+    }, 2000);
+  };
+
+  copySavedFeedback = () => {
+    let pasteFeedback = document.createElement("textarea");
+    document.body.appendChild(pasteFeedback);
+    pasteFeedback.value = JSON.stringify(this.state.prevComments);
+
+    pasteFeedback.select();
+    document.execCommand("copy");
+
+    pasteFeedback.remove();
     this.setState({ copySuccess: true });
 
     setTimeout(() => {
@@ -253,9 +269,15 @@ export class GradeTable extends React.Component {
           </span>
           <Button
             onClick={this.copyFeedback}
-            style={{ margin: "15px", width: "110px", height: "40px" }}
+            style={{ margin: "15px", height: "40px" }}
           >
             Copy Feedback
+          </Button>
+          <Button
+            onClick={this.copySavedFeedback}
+            style={{ margin: "15px", height: "40px" }}
+          >
+            Export Saved Feedback
           </Button>
           {this.state.copySuccess && <div>&#9989;</div>}
         </div>
