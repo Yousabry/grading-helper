@@ -116,11 +116,10 @@ export class GradeTable extends React.Component {
     document.execCommand("copy");
 
     pasteFeedback.remove();
-    this.setState({ copySuccess: true });
 
-    setTimeout(() => {
-      this.setState({ copySuccess: false });
-    }, 2000);
+    alert(
+      "Saved comments copied to clipboard. Paste in config.json (initialComments) to have this persisted."
+    );
   };
 
   render() {
@@ -139,9 +138,9 @@ export class GradeTable extends React.Component {
         this.state.comments[i]
       ) {
         feedback +=
-          `${config.questionLabel} ${i + 1} (${this.state.qmarks[i]}/${this.state.qtotals[i]}) - ${
-            this.state.comments[i]
-          }` + delimiter;
+          `${config.questionLabel} ${i + 1} (${this.state.qmarks[i]}/${
+            this.state.qtotals[i]
+          }) - ${this.state.comments[i]}` + delimiter;
       }
     }
 

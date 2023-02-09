@@ -1,7 +1,9 @@
 # Setup
+
 Open `src/config.json` and set the variables
 
 Sample commented JSON:
+
 ```
 {
   // set the amount of points for each question (ex. q1 = 2 points, q2 = 3 points, q3 = 5 points)
@@ -19,9 +21,11 @@ Sample commented JSON:
 ```
 
 # Exporting Comments
+
 If you are not done marking but you want to preserve feedback comments click the export button and it will be copied to clipboard. You can later provide it in `config.json` to resume with the same feedback comments
 
 # To run
+
 `yarn start`
 
 Then go to `localhost:3000`
