@@ -1,12 +1,11 @@
 import React from "react";
 import { Table } from "reactstrap";
 import { Button } from "reactstrap";
+import config from "./config.json";
 
 export class GradeTable extends React.Component {
-  // STEP 1: Set this array depending on the assignment breakdown
-  totals = [2, 2, 2, 2, 2];
-  // STEP 2: Put your name and email here
-  yourNameAndEmail = "Youssef (youssefsabry@cmail.carleton.ca)";
+  totals = config.assignmentBreakdown;
+  yourNameAndEmail = config.signature;
 
   maxPossibleScore = this.totals.reduce((a, b) => a + b, 0);
 
@@ -16,7 +15,7 @@ export class GradeTable extends React.Component {
       qtotals: this.totals.map((item) => item), // mark allocation per question
       qmarks: this.totals.map((item) => item), // marks awarded per question
       comments: this.totals.map((item) => ""), // feedback per question
-      prevComments: this.totals.map((item) => []), // saved feedback for each question
+      prevComments: config.initialComments || this.totals.map((item) => []), // saved feedback for each question
       copySuccess: false, // flag for copy functionality
     };
   }
@@ -28,7 +27,7 @@ export class GradeTable extends React.Component {
 
   markChange = (event, i) => {
     let newMarks = this.state.qmarks;
-    newMarks[i] = parseInt(event.target.value);
+    newMarks[i] = parseFloat(event.target.value);
     this.setState({ qmarks: newMarks });
 
     this.updateTotal();
@@ -108,6 +107,22 @@ export class GradeTable extends React.Component {
     }, 2000);
   };
 
+  copySavedFeedback = () => {
+    let pasteFeedback = document.createElement("textarea");
+    document.body.appendChild(pasteFeedback);
+    pasteFeedback.value = JSON.stringify(this.state.prevComments);
+
+    pasteFeedback.select();
+    document.execCommand("copy");
+
+    pasteFeedback.remove();
+    this.setState({ copySuccess: true });
+
+    setTimeout(() => {
+      this.setState({ copySuccess: false });
+    }, 2000);
+  };
+
   render() {
     let percentScore = (
       (this.getCurrentTotal() / this.maxPossibleScore) *
@@ -124,7 +139,7 @@ export class GradeTable extends React.Component {
         this.state.comments[i]
       ) {
         feedback +=
-          `Part ${i + 1} (${this.state.qmarks[i]}/${this.state.qtotals[i]}) - ${
+          `${config.questionLabel} ${i + 1} (${this.state.qmarks[i]}/${this.state.qtotals[i]}) - ${
             this.state.comments[i]
           }` + delimiter;
       }
@@ -162,7 +177,9 @@ export class GradeTable extends React.Component {
                     <td>
                       <input
                         style={{ width: "50px" }}
-                        type="text"
+                        type="number"
+                        step="0.5"
+                        min="0"
                         value={this.state.qmarks[i]}
                         onChange={(event) => this.markChange(event, i)}
                       />
@@ -252,9 +269,15 @@ export class GradeTable extends React.Component {
           </span>
           <Button
             onClick={this.copyFeedback}
-            style={{ margin: "15px", width: "110px", height: "40px" }}
+            style={{ margin: "15px", height: "40px" }}
           >
             Copy Feedback
+          </Button>
+          <Button
+            onClick={this.copySavedFeedback}
+            style={{ margin: "15px", height: "40px" }}
+          >
+            Export Saved Feedback
           </Button>
           {this.state.copySuccess && <div>&#9989;</div>}
         </div>
@@ -263,7 +286,7 @@ export class GradeTable extends React.Component {
           <textarea
             readOnly
             value={feedback}
-            style={{ width: "500px", height: "300px" }}
+            style={{ width: "100%", height: "300px" }}
             id="feedback"
           ></textarea>
         </div>
